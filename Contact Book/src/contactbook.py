@@ -49,7 +49,35 @@ def delete():
 def edit():
     list()
     print("If you would like to go back, type 'back' ")
-    selectname=input("Which name would you like to edit?")
+    select_name = input("Which contact would you like to edit? (Type both name and number) ").lower()
+    if select_name == "back":
+        print('\n')
+        menu()
+    else:
+        readdata = open("list.txt", "r")
+        readfile = readdata.readlines()
+
+        editdata = open("list.txt", "w")
+        for string in readfile:
+            if select_name != string.strip():
+                editdata.write(string)
+                editdata.close()
+
+        name= input("You are now editing a contact! What is the name? ").lower()
+        number = 1
+        while number != 2:
+            number = input("What's the phone number? ")
+            if len(number) < 8:
+                print("The number is less than 8 digits!")
+            elif len(number) > 8:
+                print("The number is more than 8 digits!")
+            else:
+                append_file = open("list.txt", "a")
+                append_file.write(name + " " + number + "\n")
+                append_file.close()
+                print("Added!\n")
+                menu()
+                break
 
 #Search
 def search():
@@ -95,7 +123,7 @@ def view():
 
 #Menu
 def menu():
-    print("Welcome to Contacts Book! Here are some things you can do!\n"
+    print("Welcome to your Contacts! *Insert Clown Face Here!* Here are some things you can do!\n"
           "1. Add\n" #DONE
           "2. Delete\n" #DONE?!?
           "3. Edit\n"
