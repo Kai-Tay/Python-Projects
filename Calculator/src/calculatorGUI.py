@@ -8,9 +8,10 @@ calculations = []
 #Keypresses
 def keypress(value):
     calculations.extend(value)
+    display = "".join(calculations)
     print(calculations)
     screen = tk.Label (
-        text=calculations,
+        text=display,
         height="1",
     )
     screen.grid(
@@ -19,23 +20,12 @@ def keypress(value):
         columnspan=4,
     )
 
-def operatorpress(operator):
-    calculations.extend(operator)
-    print(calculations)
-    screen = tk.Label (
-        text=calculations,
-        height="1",
-    )
-    screen.grid(
-        row=1,
-        column=0,
-        columnspan=4,
-    )
 def deletepress():
     calculations.pop(-1)
+    display = "".join(calculations)
     print(calculations)
     screen = tk.Label (
-        text=calculations,
+        text=display,
         height="1",
     )
     screen.grid(
@@ -45,14 +35,27 @@ def deletepress():
     )
 
 def finalequation():
-    finalcalculations = "".join(calculations)
-    answer = eval(finalcalculations)
-    print(answer)
-    screen = tk.Label (
-        text=answer,
-        height="1",
-        width="30"
-    )
+    try:
+        finalcalculations = "".join(calculations)
+        answer = eval(finalcalculations)
+        print(answer)
+        screen = tk.Label (
+            text=answer,
+            height="1",
+            width="30"
+        )
+        screen.grid(
+            row=1,
+            column=0,
+            columnspan=4,
+        )
+    except:
+        screen = tk.Label (
+            text="Error",
+            height="1",
+            width="30",
+            fg="red",
+        )
     screen.grid(
         row=1,
         column=0,
@@ -231,7 +234,7 @@ decimal = tk.Button(
     background="grey36",
     width="10",
     height="5",
-    command= lambda: operatorpress("."),
+    command= lambda: keypress("."),
 
 )
 decimal.grid(
@@ -245,7 +248,7 @@ plus = tk.Button(
     background="grey36",
     width="6",
     height="5",
-    command=lambda: operatorpress("+"),
+    command=lambda: keypress("+"),
 )
 plus.grid(
     row=2,
@@ -257,7 +260,7 @@ minus = tk.Button(
     background="grey36",
     width="6",
     height="5",
-    command= lambda: operatorpress("-"),
+    command= lambda: keypress("-"),
 
 )
 minus.grid(
@@ -271,7 +274,7 @@ multiply = tk.Button(
     background="grey36",
     width="6",
     height="5",
-    command= lambda: operatorpress("*"),
+    command= lambda: keypress("*"),
 
 )
 multiply.grid(
@@ -285,7 +288,7 @@ divide = tk.Button(
     background="grey36",
     width="6",
     height="5",
-    command= lambda: operatorpress("/"),
+    command= lambda: keypress("/"),
 
 )
 divide.grid(
