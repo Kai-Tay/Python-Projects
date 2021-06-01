@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import csv
+import pandas as pd
 
 def expensewindow():
     #Opens Expense Window GUI
@@ -25,7 +26,6 @@ def expensewindow():
             else:
                 #Appending Data
                 newexpense = [values1["Desc"], values1["Cat"],values1["Exp"]]
-                print(newexpense)
                 with open(f"{filename}.csv", "a") as file:
                     write = csv.writer(file)
                     write.writerow(newexpense)
@@ -54,15 +54,21 @@ def deletewindow():
             #Converting to List
             deletelist = values1['selecteddeletedata']
             stringdata = "".join(str(e) for e in deletelist)
-            deletedata= stringdata.replace("'","").replace("[","").replace("]","")
+            deletedata= stringdata.replace("[","").replace("]","")
+            print(deletedata)
         #Deleting data from csvfile
             with open(f"{filename}.csv", "r") as file:
                 reader = csv.reader(file)
                 with open(f"{filename}.csv", "w") as write:
                     writer = csv.writer(write)
-                    for row in reader:
-                        if row != deletedata:
-                            writer.write(row)
+                    for rows in reader:
+                        print(rows)
+                        if rows != deletedata:
+                            writer.writerow(rows)
+                        else:
+                            print("Deleted!")
+                    print("DONE")
+
             deletewindow.close()
         elif event == "Cancel":
            deletewindow.close()
@@ -104,7 +110,9 @@ while True:
             with open(f"{filename}.csv", "r") as file:
                 reader = csv.reader(file)
                 data = list(reader)
-                print("File Opened!")
+                column_names = ["Description","Category","Expense"]
+                df = pd.read_csv(f"{filename}.csv",names = column_names)
+                total_expenditure = df["Expense"].sum(axis = 0)
                 #UI UPDATE
                 mainlayout = [[sg.Text('Expense Tracker', font=("Callibri",25))],
                               [sg.Text('Month', font=("Callibri", 15)), sg.InputCombo(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], size=(50, 3), key='Month')],
@@ -112,7 +120,7 @@ while True:
                               [sg.Button('View'), sg.Text(f"{filename}", font=("Callibri",20))],
                               [sg.Table(values=data, headings= header_list,auto_size_columns=False,col_widths=[80, 40, 10],
                                         display_row_numbers= True,justification="center", key="Table", row_height=40)],
-                              [sg.Button("Add New Expense"),sg.Button("Delete Expense")]
+                              [sg.Button("Add New Expense"),sg.Button("Delete Expense"), sg.Text(f"Total Expenditure = {total_expenditure}", font=("Callibri", 15))]
                               ]
 
                 window = sg.Window("$$ Expense Tracker $$", mainlayout, size=(1000,600))
