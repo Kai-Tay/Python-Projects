@@ -38,10 +38,13 @@ def expensewindow():
             expensewindow.close()
 
 def deletewindow():
+    #Checks Number Of Rows for GUI Slider
+    opencsv = open(f"{filename}.csv")
+    number_of_rows = len(list(opencsv)) - 1
     #Opens Expense Window GUI
     deleteeditor = [[sg.Text('Delete', font=("Callibri",25))],
-                    [sg.Text('Select the Row to be deleted:')],
-                    [sg.Listbox(values=data, size=(90,15), key='selecteddeletedata')],
+                    [sg.Text('Choose the Row to be deleted:',font=("Callibri",15))],
+                    [sg.Slider(range=(0,number_of_rows), size=(90,15),orientation= "h", key='selecteddeletedata')],
                     [sg.Button("Delete"), sg.Button("Cancel")]
                      ]
     deletewindow = sg.Window("Expense", deleteeditor, size=(600,300))
@@ -51,24 +54,12 @@ def deletewindow():
         if event == sg.WIN_CLOSED:
             break
         elif event == "Delete":
-            #Converting to List
-            deletelist = values1['selecteddeletedata']
-            stringdata = "".join(str(e) for e in deletelist)
-            deletedata= stringdata.replace("[","").replace("]","")
-            print(deletedata)
-        #Deleting data from csvfile
-            with open(f"{filename}.csv", "r") as file:
-                reader = csv.reader(file)
-                with open(f"{filename}.csv", "w") as write:
-                    writer = csv.writer(write)
-                    for rows in reader:
-                        print(rows)
-                        if rows != deletedata:
-                            writer.writerow(rows)
-                        else:
-                            print("Deleted!")
-                    print("DONE")
-
+            #Open Csv file in Pandas and Selects Row
+            df = pd.read_csv(f"{filename}.csv",header = None,)
+            selected_row = int(values1["selecteddeletedata"])
+            #Deletes Selected Row in Pandas
+            df.drop([selected_row], inplace=True)
+            df.to_csv(f"{filename}.csv", header = None, index_label = None, index = False)
             deletewindow.close()
         elif event == "Cancel":
            deletewindow.close()
